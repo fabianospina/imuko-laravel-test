@@ -1,0 +1,175 @@
+##########################################################
+Install Laravel
+#########################################################
+
+
+$ composer create-project --prefer-dist laravel/laravel VChavoApp
+$ cd VChavoApp
+$ chmod -R 777 storage/ bootstrap/cache
+
+.env File
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=c1_vchavo
+DB_USERNAME=c1_vchavo
+DB_PASSWORD=MobJzCx9!6
+
+
+#########################################################
+Instalacion de extensiones
+########################################################
+
+https://github.com/chiraggude/awesome-laravel
+
+- Laravel 5 Extended Generators (https://github.com/laracasts/Laravel-5-Generators-Extended)
+
+  Step 1: Install Through Composer
+  $ composer require laracasts/generators --dev
+
+  Step 2: Run Artisan!
+  You're all set. Run php artisan from the console, and you'll see the new commands in the make:* namespace section.
+
+  Examples: (https://github.com/laracasts/Laravel-5-Generators-Extended#examples)
+
+- Forms & HTML (https://github.com/LaravelCollective/html - https://laravelcollective.com/docs/master/html)
+
+  Begin by installing this package through Composer. Edit your project's composer.json file to require laravelcollective/html.
+
+  $ composer require "laravelcollective/html":"^5.4.0"
+
+  Next, add your new provider to the providers array of config/app.php:
+
+  'providers' => [
+    // ...
+    Collective\Html\HtmlServiceProvider::class,
+    // ...
+  ],
+
+  Finally, add two class aliases to the aliases array of config/app.php:
+
+  'aliases' => [
+    // ...
+      'Form' => Collective\Html\FormFacade::class,
+      'Html' => Collective\Html\HtmlFacade::class,
+    // ...
+  ],
+
+- Laravel Menu (https://github.com/lavary/laravel-menu)
+
+  $ composer require lavary/laravel-menu
+
+  If you are in Laravel 5.5 you won't need to edit your config/app.php, if you are in a previous version of Laravel, please do the following:
+  Append Laravel Menu service provider to providers array in config/app.php.
+
+'providers' => [
+
+        /*
+         * Laravel Framework Service Providers...
+         */
+        Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
+        Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+
+    ...
+
+        Lavary\Menu\ServiceProvider::class,
+
+        ...
+
+],
+
+  At the end of config/app.php add 'Menu' => Lavary\Menu\Facade::class to the $aliases array:
+
+'aliases' => [
+
+    'App'       => Illuminate\Support\Facades\App::class,
+    'Artisan'   => Illuminate\Support\Facades\Artisan::class,
+    ...
+    'Menu'      => Lavary\Menu\Facade::class,
+
+],
+
+  This registers the package with Laravel and creates an alias called Menu.
+
+  Getting Started
+  You can define the menu definitions inside a laravel middleware. As a result anytime a request hits your application, the menu objects will be available to all your views.
+
+  $ php artisan make:middleware GenerateMenus
+
+  Be sure to also add the middleware to the app\Http\Kernel.php
+
+    protected $middlewareGroups = [
+        'web' => [
+            //...
+            \App\Http\Middleware\GenerateMenus::class,
+        ],
+        //...
+    ];
+
+  Open the middleware you just created app\Http\Middleware\GenerateMenus.php
+  Then add a basic menu declaration. For example:
+
+  public function handle($request, Closure $next)
+  {
+      \Menu::make('MyNavBar', function ($menu) {
+          $menu->add('Home');
+          $menu->add('About', 'about');
+          $menu->add('Services', 'services');
+          $menu->add('Contact', 'contact');
+      });
+
+      return $next($request);
+  }
+
+  Finally, open a view and add:
+
+  {!! $MyNavBar->asUl() !!}
+
+- jQuery DataTables API  (https://github.com/yajra/laravel-datatables)
+  Quick Installation
+
+  $ composer require yajra/laravel-datatables-oracle:"~8.0"
+
+  Service Provider & Facade (Optional on Laravel 5.5)
+  Register provider and facade on your config/app.php file.
+
+  'providers' => [
+      ...,
+      Yajra\DataTables\DataTablesServiceProvider::class,
+  ]
+
+  'aliases' => [
+      ...,
+      'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+  ]
+
+  Install DataTables Assets
+  Install DataTables assets on your master layout or view where you want to use it.
+  DataTables CSS : <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+  jQuery : <script src="//code.jquery.com/jquery.js"></script>
+  DataTables : <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+
+  Import Datatables class on our controller.
+  You can import the Datatables facade.
+
+    use Datatables;
+
+  Or, directly import the class to make it more IDE friendly.
+
+    use Yajra\Datatables\Datatables;
+
+
+===================
+===================
+
+=======================================================
+Home - Cheracters
+=======================================================
+php artisan make:migration:schema create_characters_table --schema="title:string:nullable, name:string:default(''), image:string:nullable, flat:string:nullable, description:text"
+
+php artisan make:migration:schema create_nicknames_table --schema="character_id:unsignedInteger:foreign, name:string"
+
+php artisan make:controller CharactersController --resource
+php artisan make:controller NicknamesController --resource
